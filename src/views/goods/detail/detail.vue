@@ -1,11 +1,82 @@
 <template>
   <div class="goodsDetail">
-    商品详情
-    <editor/>
+    <a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model-item label="产品标题">
+        <a-input class="line" placeholder="请输入产品标题" />
+      </a-form-model-item>
+      <a-form-model-item label="产品图片">
+        <a-upload
+          name="avatar"
+          list-type="picture-card"
+          class="avatar-uploader"
+          :show-upload-list="false"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          @change="handleChange"
+        >
+          <div v-if='form.imageUrl.length != 10'>
+            <a-icon :type="loading ? 'loading' : 'plus'" />
+            <div class="ant-upload-text">
+              Upload
+            </div>
+          </div>
+          <img v-for='item in form.imageUrl' :key='item' :src="item" alt="avatar" />
+        </a-upload>
+      </a-form-model-item>
+      <a-form-model-item label="产品价格">
+        <a-input class="line" type='number' placeholder="请输入产品价格" />
+      </a-form-model-item>
+      <a-form-model-item label="划线价格">
+        <a-input class="line" type='number' placeholder="请输入划线价格" />
+      </a-form-model-item>
+      <a-form-model-item label="库存">
+        <a-input class="line" type='number' placeholder="请输入商品库存" />
+      </a-form-model-item>
+      <a-form-model-item label="虚拟销量">
+        <a-input class="line" type='number' placeholder="请输入虚拟销量" />
+      </a-form-model-item>
+      <a-form-model-item label="商家信息">
+        <div v-for='item in form.shopinfo' :key='item'>
+          <a-form-model layout='inline'>
+            <a-form-model-item label="商家名称">
+              <a-input placeholder="请输入商家名称" />
+            </a-form-model-item>
+            <a-form-model-item label="地址信息">
+              <a-input placeholder="请输入商家地址信息" />
+            </a-form-model-item>
+            <a-form-model-item label="经度">
+              <a-input placeholder="请输入商家经度" />
+            </a-form-model-item>
+            <a-form-model-item label="纬度">
+              <a-input placeholder="请输入商家纬度" />
+            </a-form-model-item>
+            <a-form-model-item label="电话">
+              <a-input placeholder="请输入商家电话" />
+            </a-form-model-item>
+            <a-form-model-item>
+              <a-button type="primary" shape="circle" icon="plus" />
+            </a-form-model-item>
+            <a-form-model-item v-if='form.shopinfo.length != 1'>
+              <a-button type="danger" shape="circle" icon="minus" />
+            </a-form-model-item>
+          </a-form-model>
+        </div>
+      </a-form-model-item>
+      <a-form-model-item label="产品描述">
+        <div style='width: 800px;'>
+          <editor/>
+        </div>
+      </a-form-model-item>
+      <a-form-model-item label="上架时间">
+        <a-time-picker :default-value="moment(form.start_time, 'HH:mm:ss')" size="large" />
+        <span style='margin: 0 10px;'>至</span>
+        <a-time-picker :default-value="moment(form.end_time, 'HH:mm:ss')" size="large" />
+      </a-form-model-item>
+    </a-form-model>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'goodsDetail',
   created(){
@@ -17,9 +88,31 @@ export default {
   },
   data(){
     return {
+      labelCol: { span: 1 },
+      wrapperCol: { span: 21 },
+      form: {
+        title: '',
+        images: [],
+        price: 0,
+        line_price: 0,
+        stock: 0,
+        sold: 0,
+        shopinfo: [
+          {name: '', address: '', long: '', lat: '', phone: ''}
+        ],
+        edit: '',
+        start_time: '12:08:23',
+        end_time: '12:08:23',
+        imageUrl: []
+      },
+      loading: false
     }
   },
   methods: {
+    moment,
+    handleChange(e){
+      console.log(e)
+    }
   }
 }
 </script>
@@ -27,4 +120,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .goodsDetail{}
+.line{
+  width: auto;
+}
 </style>

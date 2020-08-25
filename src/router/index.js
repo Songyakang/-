@@ -19,16 +19,28 @@ Vue.use(VueRouter)
     icon: 'customer-service',
     children: [
       {
-        path: '/about',
+        path: '/tourismManagement',
         name: '旅游管理',
         icon: 'customer-service',
         component: () => import('../views/About.vue')
       },
       {
-        path: '/about',
-        name: '商品管理',
+        path: '/tourismEditor',
+        name: '旅游编辑',
         icon: 'customer-service',
         component: () => import('../views/About.vue')
+      },
+      {
+        path: '/goodsManagement',
+        name: '商品管理',
+        icon: 'customer-service',
+        component: () => import('../views/goods/list/list.vue')
+      },
+      {
+        path: '/goodsEditor',
+        name: '商品编辑',
+        icon: 'customer-service',
+        component: () => import('../views/goods/detail/detail.vue')
       }
     ]
   },
