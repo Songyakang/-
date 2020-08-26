@@ -35,22 +35,19 @@
         <a-input class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
       <a-form-model-item label="商家信息">
-        <div v-for='item in form.shopinfo' :key='item'>
+        <div v-for='item in form.shopinfo' :key='item.name'>
           <a-form-model layout='inline'>
             <a-form-model-item label="商家名称">
-              <a-input placeholder="请输入商家名称" />
+              <a-input v-model="item.name" placeholder="请输入商家名称" />
             </a-form-model-item>
             <a-form-model-item label="地址信息">
-              <a-input placeholder="请输入商家地址信息" />
+              <a-input v-model="item.address" placeholder="请输入商家地址信息" />
             </a-form-model-item>
-            <a-form-model-item label="经度">
-              <a-input placeholder="请输入商家经度" />
-            </a-form-model-item>
-            <a-form-model-item label="纬度">
-              <a-input placeholder="请输入商家纬度" />
+            <a-form-model-item label="经纬度">
+              <a-input v-model="item.long" style="background: #ffffff;" placeholder="请输入商家经纬度" />
             </a-form-model-item>
             <a-form-model-item label="电话">
-              <a-input placeholder="请输入商家电话" />
+              <a-input v-model="item.phone" placeholder="请输入商家电话" />
             </a-form-model-item>
             <a-form-model-item>
               <a-button type="primary" shape="circle" icon="plus" />
@@ -72,6 +69,10 @@
         <a-time-picker :default-value="moment(form.end_time, 'HH:mm:ss')" size="large" />
       </a-form-model-item>
     </a-form-model>
+
+    <a-modal v-model="visible" :width='"800px"' title="选择地图" ok-text="确认" cancel-text="取消" @ok="changeModal">
+      <tencent-map/>
+    </a-modal>
   </div>
 </template>
 
@@ -82,14 +83,16 @@ export default {
   created(){
   },
   components:{
-    editor: () => import('@/components/editor')
+    editor: () => import('@/components/editor'),
+    tencentMap: () => import('@/components/tencentMap')
   },
   filters:{
   },
   data(){
     return {
-      labelCol: { span: 1 },
-      wrapperCol: { span: 21 },
+      visible: true,
+      labelCol: { span: 2 },
+      wrapperCol: { span: 22 },
       form: {
         title: '',
         images: [],
@@ -112,6 +115,9 @@ export default {
     moment,
     handleChange(e){
       console.log(e)
+    },
+    changeModal(){
+      this.visible = !this.visible
     }
   }
 }

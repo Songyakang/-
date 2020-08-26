@@ -61,7 +61,7 @@ export default {
     }
     //配置菜单
     this.editor.customConfig.menus = this.menus
-
+    this.editor.customConfig.zIndex = 100
     //配置默认颜色
     this.editor.customConfig.colors = this.colors
     this.editor.create()
@@ -79,4 +79,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#editor{
+  z-index: 9;
+}
 </style>
