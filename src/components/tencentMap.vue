@@ -1,6 +1,6 @@
 <template>
   <div id="tencentMap">
-    <div id="container" style="width:500px; height:300px"></div>
+    <div ref='container'  style="width:100%; height:500px"></div>
   </div>
 </template>
 
@@ -14,33 +14,21 @@ export default {
     }
   },
   mounted(){
-    this.loadScript()
+    this.init()
   },
   data(){
     return {
-      editor: null
+      editor: null,
+      map: null
     }
   },
   methods: {
-    loadScript (){
-      const script = document.createElement("script")
-      script.type = "text/javascript"
-      script.src = `https://map.qq.com/api/js?v=2.exp&key=${this.mapkey}`
-      //script.src = 'https://webapi.amap.com/maps?v=1.4.15&key=3a04fab20d0d7c49367233e3764df061'
-      document.body.appendChild(script)
-      script.onload = () => {
-        console.log('加载完毕')
-      }
-    },
     init (){
-      const myLatlng = window.qq.maps.LatLng(-34.397, 150.644)
-      const myOptions = {
-        zoom: 8,
-        center: myLatlng,
-        mapTypeId: window.qq.maps.MapTypeId.ROADMAP
+      const config = {
+        zoom: 13,
+        cneter: new qq.maps.LatLng(39.914850, 116.403765)// eslint-disable-line
       }
-      window.AMap.Map('container');
-      window.qq.maps.Map(document.getElementById("container"), myOptions)
+      this.map = new qq.maps.Map(this.$refs.container, config) // eslint-disable-line
     }
   }
 }
