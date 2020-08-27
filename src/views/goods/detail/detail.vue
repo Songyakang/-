@@ -35,7 +35,7 @@
         <a-input class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
       <a-form-model-item label="商家信息">
-        <div v-for='item in form.shopinfo' :key='item.name'>
+        <div v-for='(item, index) in form.shopinfo' :key='index'>
           <a-form-model layout='inline'>
             <a-form-model-item label="商家名称">
               <a-input v-model="item.name" placeholder="请输入商家名称" />
@@ -44,13 +44,13 @@
               <a-input v-model="item.address" placeholder="请输入商家地址信息" />
             </a-form-model-item>
             <a-form-model-item label="经纬度">
-              <a-input v-model="item.long" style="background: #ffffff;" placeholder="请输入商家经纬度" />
+              <a-input v-model="item.latLng" @click="visible = true, changeindex = index" style="background: #ffffff;" placeholder="请输入商家经纬度" />
             </a-form-model-item>
             <a-form-model-item label="电话">
               <a-input v-model="item.phone" placeholder="请输入商家电话" />
             </a-form-model-item>
             <a-form-model-item>
-              <a-button type="primary" shape="circle" icon="plus" />
+              <a-button @click="addshopinfo" type="primary" shape="circle" icon="plus" />
             </a-form-model-item>
             <a-form-model-item v-if='form.shopinfo.length != 1'>
               <a-button type="danger" shape="circle" icon="minus" />
@@ -71,7 +71,7 @@
     </a-form-model>
 
     <a-modal v-model="visible" :width='"800px"' title="选择地图" ok-text="确认" cancel-text="取消" @ok="changeModal">
-      <tencent-map/>
+      <tencent-map @setLonaLat='setLonaLat'/>
     </a-modal>
   </div>
 </template>
@@ -90,7 +90,8 @@ export default {
   },
   data(){
     return {
-      visible: true,
+      visible: false,
+      changeindex: null,
       labelCol: { span: 2 },
       wrapperCol: { span: 22 },
       form: {
@@ -101,7 +102,7 @@ export default {
         stock: 0,
         sold: 0,
         shopinfo: [
-          {name: '', address: '', long: '', lat: '', phone: ''}
+          {name: '', address: '', latLng: '', phone: ''}
         ],
         edit: '',
         start_time: '12:08:23',
@@ -116,8 +117,16 @@ export default {
     handleChange(e){
       console.log(e)
     },
-    changeModal(){
+    changeModal(e){
       this.visible = !this.visible
+      console.log(e)
+    },
+    setLonaLat(e){
+      console.log(this.changeindex,e)
+      this.form.shopinfo[this.changeindex].latLng = e.latLng.toString()
+    },
+    addshopinfo(){
+      this.form.shopinfo.push({name: '', address: '', latLng: '', phone: ''})
     }
   }
 }
