@@ -35,6 +35,9 @@
     "env": {
       "node": true
     },
+    "globals":{
+      "qq": true
+    },
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended"

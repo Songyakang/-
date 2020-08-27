@@ -26,9 +26,9 @@ export default {
     init (){
       const config = {
         zoom: 13,
-        cneter: new qq.maps.LatLng(39.914850, 116.403765)// eslint-disable-line
+        cneter: new qq.maps.LatLng(39.914850, 116.403765)
       }
-      this.map = new qq.maps.Map(this.$refs.container, config) // eslint-disable-line
+      this.map = new qq.maps.Map(this.$refs.container, config)
     }
   }
 }
