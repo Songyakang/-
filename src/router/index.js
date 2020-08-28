@@ -22,13 +22,13 @@ Vue.use(VueRouter)
         path: '/tourismManagement',
         name: '旅游管理',
         icon: 'customer-service',
-        component: () => import('../views/About.vue')
+        component: () => import('../views/tourism/list/list.vue')
       },
       {
         path: '/tourismEditor',
         name: '旅游编辑',
         icon: 'customer-service',
-        component: () => import('../views/About.vue')
+        component: () => import('../views/tourism/detail/detail.vue')
       },
       {
         path: '/goodsManagement',

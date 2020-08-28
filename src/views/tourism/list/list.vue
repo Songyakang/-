@@ -1,6 +1,5 @@
 <template>
   <div class="tourismList">
-    旅游列表
     <editor/>
   </div>
 </template>
@@ -11,15 +10,21 @@ export default {
   created(){
   },
   components:{
-    editor: () => import('@/components/editor')
   },
   filters:{
   },
   data(){
     return {
+      test: '22222222'
     }
   },
   methods: {
+    show(){
+      console.log(this.test)
+    },
+    changeddd(e){
+      this.test = e
+    }
   }
 }
 </script>

@@ -9,7 +9,7 @@
           v-model='address'/>
       </a-form-item>
       <a-form-item label='城市'>
-        <a-input class="searc" v-model="city"/>
+        <a-input @change="search" class="searc" v-model="city"/>
       </a-form-item>
       <a-form-item>
         <a-button @click="search" type='primary'>搜索</a-button>
@@ -50,6 +50,8 @@ export default {
     init (){
       const config = {
         zoom: 13,
+        minZoom: 7,
+        maxZoom: 16,
         cneter: new qq.maps.LatLng(39.914850, 116.403765),
         panControl: true,
         panControlOptions: {
@@ -60,18 +62,21 @@ export default {
       this.map = new qq.maps.Map(this.$refs.container, config)
       this.searchService = new qq.maps.SearchService({
         complete: (e) => {
+          this.markersArray.map((e) => {
+            e.setMap(null)
+          })
           this.markersArray = []
-          this.willdata = Array.from(new Set(e.detail.pois.map(e => e.address)))
+          this.willdata = Array.from(new Set(e.detail.pois.map(e => e.name)))
           this.$emit('setLonaLat', {latLng: e.detail.pois[0].latLng})
           for(let i of e.detail.pois){
             latlngBounds.extend(i.latLng)
-            this.setMarker(new qq.maps.LatLng(i.latLng.lat, i.latLng.lng))
+            this.setMarker(new qq.maps.LatLng(i.latLng.lat, i.latLng.lng), i.name)
           }
+          this.map.panTo(new qq.maps.LatLng(e.detail.pois[0].latLng.lat, e.detail.pois[0].latLng.lng))
           if(e.detail.pois.length == 1){
-            this.setMarker(new qq.maps.LatLng(e.detail.pois[0].latLng.lat, e.detail.pois[0].latLng.lng))
-            this.map.panTo(new qq.maps.LatLng(e.detail.pois[0].latLng.lat, e.detail.pois[0].latLng.lng))
+            this.setMarker(new qq.maps.LatLng(e.detail.pois[0].latLng.lat, e.detail.pois[0].latLng.lng), e.detail.pois[0].name)
+            
           }
-          this.map.fitBounds(latlngBounds);
         }
       })
       this.mapcilck = new qq.maps.event.addListener(this.map, 'click', this.mapclick)
@@ -91,10 +96,11 @@ export default {
     /**
      * 设置标注点
      */
-    setMarker (latLng = new qq.maps.LatLng(39.914850, 116.403765)){
+    setMarker (latLng = new qq.maps.LatLng(39.914850, 116.403765), title = ''){
       this.marker = new qq.maps.Marker({
         position: latLng,
-        map: this.map
+        map: this.map,
+        title
       })
       this.markersArray.push(this.marker)
     },
