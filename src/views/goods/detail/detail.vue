@@ -2,57 +2,63 @@
   <div class="goodsDetail">
     <a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-form-model-item label="产品标题">
-        <a-input class="line" placeholder="请输入产品标题" />
+        <a-input v-model="form.title" class="line" placeholder="请输入产品标题" />
       </a-form-model-item>
       <a-form-model-item label="产品图片">
         <a-upload
-          name="avatar"
+          name="file"
           list-type="picture-card"
           class="avatar-uploader"
           :show-upload-list="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action="https://api.muyang.heiym.com/api/admin/common/upload"
+          :headers='headers'
           @change="handleChange"
         >
-          <div v-if='form.imageUrl.length != 10'>
+          <div v-if='form.photos.length < 10'>
             <a-icon :type="loading ? 'loading' : 'plus'" />
             <div class="ant-upload-text">
               Upload
             </div>
           </div>
-          <img v-for='item in form.imageUrl' :key='item' :src="item" alt="avatar" />
         </a-upload>
+        <div class="img-list" v-for='(item, index) in form.photos' :key='index'>
+          <img :src='item'>
+        </div>
       </a-form-model-item>
       <a-form-model-item label="产品价格">
-        <a-input class="line" type='number' placeholder="请输入产品价格" />
+        <a-input v-model='form.money' class="line" type='number' placeholder="请输入产品价格" />
       </a-form-model-item>
       <a-form-model-item label="划线价格">
-        <a-input class="line" type='number' placeholder="请输入划线价格" />
+        <a-input v-model="form.line_money" class="line" type='number' placeholder="请输入划线价格" />
       </a-form-model-item>
       <a-form-model-item label="库存">
-        <a-input class="line" type='number' placeholder="请输入商品库存" />
+        <a-input v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
       </a-form-model-item>
       <a-form-model-item label="虚拟销量">
-        <a-input class="line" type='number' placeholder="请输入虚拟销量" />
+        <a-input v-model="form.virtual_sales" class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
       <a-form-model-item label="商家信息">
-        <div v-for='(item, index) in form.shopinfo' :key='index'>
+        <div v-for='(item, index) in form.shops' :key='index'>
           <a-form-model layout='inline'>
             <a-form-model-item label="商家名称">
-              <a-input v-model="item.name" placeholder="请输入商家名称" />
+              <a-input v-model="item.shop_name" placeholder="请输入商家名称" />
             </a-form-model-item>
             <a-form-model-item label="地址信息">
-              <a-input v-model="item.address" placeholder="请输入商家地址信息" />
+              <a-input v-model="item.shop_addr" placeholder="请输入商家地址信息" />
             </a-form-model-item>
-            <a-form-model-item label="经纬度">
-              <a-input v-model="item.latLng" @click="visible = true, changeindex = index" style="background: #ffffff;" placeholder="请输入商家经纬度" />
+            <a-form-model-item label="经度">
+              <a-input v-model="item.longitude" @click="visible = true, changeindex = index" style="background: #ffffff;" placeholder="请输入商家经纬度" />
+            </a-form-model-item>
+            <a-form-model-item label="纬度">
+              <a-input v-model="item.latitude" @click="visible = true, changeindex = index" style="background: #ffffff;" placeholder="请输入商家经纬度" />
             </a-form-model-item>
             <a-form-model-item label="电话">
-              <a-input v-model="item.phone" placeholder="请输入商家电话" />
+              <a-input v-model="item.shop_phone" placeholder="请输入商家电话" />
             </a-form-model-item>
             <a-form-model-item>
               <a-button @click="addshopinfo" type="primary" shape="circle" icon="plus" />
             </a-form-model-item>
-            <a-form-model-item v-if='form.shopinfo.length != 1'>
+            <a-form-model-item v-if='form.shops.length != 1'>
               <a-button type="danger" shape="circle" icon="minus" />
             </a-form-model-item>
           </a-form-model>
@@ -60,13 +66,16 @@
       </a-form-model-item>
       <a-form-model-item label="产品描述">
         <div style='width: 800px;'>
-          <editor/>
+          <editor :data='form.details' @changeData='writeEditor'/>
         </div>
       </a-form-model-item>
       <a-form-model-item label="上架时间">
-        <a-time-picker :default-value="moment(form.start_time, 'HH:mm:ss')" size="large" />
+        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.start_time' size="large" />
         <span style='margin: 0 10px;'>至</span>
-        <a-time-picker :default-value="moment(form.end_time, 'HH:mm:ss')" size="large" />
+        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.end_time'  size="large" />
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-button @click="post">提交</a-button>
       </a-form-model-item>
     </a-form-model>
 
@@ -77,10 +86,11 @@
 </template>
 
 <script>
-import moment from 'moment'
+import {postData, changeData} from '@/api/goods'
 export default {
   name: 'goodsDetail',
   created(){
+    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form = this.$route.query.data : null
   },
   components:{
     editor: () => import('@/components/editor'),
@@ -96,37 +106,78 @@ export default {
       wrapperCol: { span: 22 },
       form: {
         title: '',
-        images: [],
-        price: 0,
-        line_price: 0,
-        stock: 0,
+        photos: [],
+        money: 0,
+        line_money: 0,
+        stock_nums: 0,
         sold: 0,
-        shopinfo: [
-          {name: '', address: '', latLng: '', phone: ''}
+        type: 2,
+        status: 1,
+        virtual_sales: 0,
+        shops: [
+          {shop_name: '', shop_addr: '', longitude: '', latitude: '', shop_phone: ''}
         ],
-        edit: '',
+        details: '',
         start_time: '12:08:23',
-        end_time: '12:08:23',
+        end_time: '22:33:44',
         imageUrl: []
+      },
+      headers: {
+        token: localStorage.token
       },
       loading: false
     }
   },
   methods: {
-    moment,
     handleChange(e){
-      console.log(e)
+      console.log(e.file.response)
+      if(e.file.response){
+        if(e.file.response.code == 200){
+          console.log(e.file.response.data)
+          this.form.photos.push(e.file.response.data.url)
+        }else{
+          this.$message.error(e.file.response.msg)
+        }
+      }
     },
-    changeModal(e){
+    changeModal(){
       this.visible = !this.visible
-      console.log(e)
     },
     setLonaLat(e){
       console.log(this.changeindex,e)
-      this.form.shopinfo[this.changeindex].latLng = e.latLng.toString()
+      this.form.shops[this.changeindex] = {
+        ...this.form.shops[this.changeindex],
+        longitude: e.latLng.lng,
+        latitude: e.latLng.lat
+      }
     },
     addshopinfo(){
-      this.form.shopinfo.push({name: '', address: '', latLng: '', phone: ''})
+      this.form.shops.push({shop_name: '', shop_addr: '', longitude: '', latitude: '', shop_phone: ''})
+    },
+    /**
+     * 填写富文本信息
+     * @params {string} e.data 富文本内容
+     */
+    writeEditor(e){
+      this.form.details = e.data
+    },
+    post(){
+      setTimeout(() => {
+        if(this.$route.query.data){
+          changeData(this.form).then(res => {
+             this.$message.success(res.msg,10)
+             this.$router.go(-1)
+          })
+        }else{
+          postData(this.form).then(res => {
+            this.$message.success(res.msg,10)
+            this.$router.go(-1)
+          })
+        }
+      }, 100)
+    },
+    changetime(e) {
+      this.form.end_time = e
     }
   }
 }
@@ -137,5 +188,37 @@ export default {
 .goodsDetail{}
 .line{
   width: auto;
+}
+.avatar-uploader{
+  display: table;
+  float: left;
+  width: 104px;
+  height: 104px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  vertical-align: top;
+  background-color: #fafafa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.img-list{
+  display: table;
+  float: left;
+  width: 104px;
+  height: 104px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+  vertical-align: top;
+  background-color: #fafafa;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  img{
+    width: 100px;
+    height: 100px;
+  }
 }
 </style>

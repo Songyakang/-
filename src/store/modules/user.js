@@ -1,4 +1,4 @@
-import {login} from '@/api/user'
+import {login, info} from '@/api/user'
 const state = {
   token: localStorage.getItem('userInfo') ? JSON.parse(localStorage.userInfo).token : '',
   name: localStorage.getItem('userInfo') ? JSON.parse(localStorage.userInfo).name : '',
@@ -40,13 +40,18 @@ const actions = {
       login(userInfo).then(res => {
         userInfo = {
           ...userInfo,
-          name: res.name,
-          token: res.data,
+          name: userInfo.username,
+          token: res.data.token,
           remember: true
         }
-        localStorage.userInfo = JSON.stringify(userInfo)
-        commit('SET_DATA', userInfo)
-        resolve(res)
+        localStorage.token = res.data.token
+        info().then(e => {
+          userInfo.avatar = e.data.profile_picture
+          localStorage.userInfo = JSON.stringify(userInfo)
+          commit('SET_DATA', userInfo)
+          resolve(res)
+        })
+        
       })
     })
   },
@@ -57,6 +62,7 @@ const actions = {
         localStorage.userInfo = '{}'
         commit('INIT_DATA')
       }
+      localStorage.removeItem('token')
       commit('SET_TOKEN', '')
       resolve('11111111111')
     })

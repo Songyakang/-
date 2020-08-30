@@ -41,7 +41,8 @@ export default {
   methods: {
     login(){
       this.$store.dispatch('user/userlogin',{
-        ...this.form
+        username: this.form.name,
+        password: this.form.password
       }).then(() => {
         this.$router.push({path: '/about'})
       })

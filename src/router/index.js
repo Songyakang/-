@@ -28,6 +28,7 @@ Vue.use(VueRouter)
         path: '/tourismEditor',
         name: '旅游编辑',
         icon: 'customer-service',
+        hidden: true,
         component: () => import('../views/tourism/detail/detail.vue')
       },
       {
@@ -39,6 +40,7 @@ Vue.use(VueRouter)
       {
         path: '/goodsEditor',
         name: '商品编辑',
+        hidden: true,
         icon: 'customer-service',
         component: () => import('../views/goods/detail/detail.vue')
       }

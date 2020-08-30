@@ -57,7 +57,7 @@ export default {
   mounted(){
     this.editor = new wangeditor('#editor')
     this.editor.customConfig.onblur = (html) => {
-      console.log('onblur', html)
+      this.$emit('changeData', {data: html})
     }
     //配置菜单
     this.editor.customConfig.menus = this.menus
@@ -65,7 +65,7 @@ export default {
     //配置默认颜色
     this.editor.customConfig.colors = this.colors
     this.editor.create()
-    console.log(this.editor)
+    this.editor.txt.html(this.data)
   },
   data(){
     return {
