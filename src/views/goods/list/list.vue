@@ -1,5 +1,6 @@
 <template>
   <div class="goodsList">
+    <a-form></a-form>
     <a-table rowKey='id' :columns='columns' :data-source='list'>
       <template slot="photos" slot-scope="text, record">
         <img v-for='(item, index) in record.photos' :key='index' :src='item'>
@@ -44,7 +45,8 @@ export default {
     searchData(){
       let params = {
         page: this.page,
-        size: this.size
+        size: this.size,
+        type: 2
       }
       if(this.title){
         params.title = this.title
