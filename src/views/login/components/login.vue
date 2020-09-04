@@ -6,15 +6,11 @@
       </a-input>
     </div>
     <div class="form-item">
-      <a-input size='large' v-model="form.password" placeholder="请输入登录密码">
+      <a-input size='large' type='password' v-model="form.password" placeholder="请输入登录密码">
         <a-icon slot="prefix" type="unlock" />
       </a-input>
     </div>
     <a-button size='large' class='login-btn' @click.stop='login'>立即登录</a-button>
-    <div class="tabbar">
-      <div @click='$emit("change", {type: 3})'>忘记密码</div>
-      <div @click='$emit("change", {type: 2})'>注册账号</div>
-    </div>
     
   </div>
 </template>

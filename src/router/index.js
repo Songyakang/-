@@ -12,16 +12,15 @@ Vue.use(VueRouter)
     hidden: true
   },
   {
-    path: '/about',
+    path: '/tourismManagement',
     name: '产品管理',
     component: Layout,
     hidden: false,
-    icon: 'customer-service',
     children: [
       {
         path: '/tourismManagement',
         name: '旅游管理',
-        icon: 'customer-service',
+        icon: 'flag',
         component: () => import('../views/tourism/list/list.vue')
       },
       {
@@ -34,7 +33,7 @@ Vue.use(VueRouter)
       {
         path: '/goodsManagement',
         name: '商品管理',
-        icon: 'customer-service',
+        icon: 'property-safety',
         component: () => import('../views/goods/list/list.vue')
       },
       {
@@ -51,7 +50,6 @@ Vue.use(VueRouter)
     name: '用户管理',
     component: Layout,
     hidden: false,
-    icon: 'customer-service',
     children: [
     ]
   },
@@ -60,7 +58,6 @@ Vue.use(VueRouter)
     name: '预约管理',
     component: Layout,
     hidden: false,
-    icon: 'customer-service',
     children: [
     ]
   },
@@ -69,7 +66,6 @@ Vue.use(VueRouter)
     name: '分销管理',
     component: Layout,
     hidden: false,
-    icon: 'customer-service',
     children: [
       {
         path: '/about',

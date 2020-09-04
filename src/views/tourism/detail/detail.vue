@@ -1,5 +1,5 @@
 <template>
-  <div class="goodsDetail">
+  <div class="toutismDetail">
     <a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
       <a-form-model-item label="产品标题">
         <a-input v-model="form.title" class="line" placeholder="请输入产品标题" />
@@ -34,6 +34,9 @@
       <a-form-model-item label="库存">
         <a-input v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
       </a-form-model-item>
+      <a-form-model-item label="是否销售">
+        <a-switch default-checked checked-children="销售" un-checked-children="下架"  v-model='form.status'/>
+      </a-form-model-item>
       <a-form-model-item label="虚拟销量">
         <a-input v-model="form.virtual_sales" class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
@@ -59,7 +62,7 @@
               <a-button @click="addshopinfo" type="primary" shape="circle" icon="plus" />
             </a-form-model-item>
             <a-form-model-item v-if='form.shops.length != 1'>
-              <a-button type="danger" shape="circle" icon="minus" />
+              <a-button @click.stop='deleteshop(index)' type="danger" shape="circle" icon="minus" />
             </a-form-model-item>
           </a-form-model>
         </div>
@@ -88,9 +91,9 @@
 <script>
 import {postData, changeData} from '@/api/goods'
 export default {
-  name: 'goodsDetail',
+  name: 'toutismDetail',
   created(){
-    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form = this.$route.query.data : null
+    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form ={...this.$route.query.data , status: this.$route.query.data .status == 1 ? true : false} : null
   },
   components:{
     editor: () => import('@/components/editor'),
@@ -112,7 +115,7 @@ export default {
         stock_nums: 0,
         sold: 0,
         type: 1,
-        status: 1,
+        status: true,
         virtual_sales: 0,
         shops: [
           {shop_name: '', shop_addr: '', longitude: '', latitude: '', shop_phone: ''}
@@ -154,6 +157,10 @@ export default {
     addshopinfo(){
       this.form.shops.push({shop_name: '', shop_addr: '', longitude: '', latitude: '', shop_phone: ''})
     },
+    deleteshop(index){
+      console.log(11111111)
+      this.form.shops.splice(index,1)
+    },
     /**
      * 填写富文本信息
      * @params {string} e.data 富文本内容
@@ -164,12 +171,12 @@ export default {
     post(){
       setTimeout(() => {
         if(this.$route.query.data){
-          changeData(this.form).then(res => {
+          changeData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
              this.$message.success(res.msg,10)
              this.$router.go(-1)
           })
         }else{
-          postData(this.form).then(res => {
+          postData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
             this.$message.success(res.msg,10)
             this.$router.go(-1)
           })
@@ -185,7 +192,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-.goodsDetail{}
 .line{
   width: auto;
 }

@@ -34,6 +34,9 @@
       <a-form-model-item label="库存">
         <a-input v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
       </a-form-model-item>
+      <a-form-model-item label="是否销售">
+        <a-switch default-checked checked-children="销售" un-checked-children="下架"  v-model='form.status'/>
+      </a-form-model-item>
       <a-form-model-item label="虚拟销量">
         <a-input v-model="form.virtual_sales" class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
@@ -59,7 +62,7 @@
               <a-button @click="addshopinfo" type="primary" shape="circle" icon="plus" />
             </a-form-model-item>
             <a-form-model-item v-if='form.shops.length != 1'>
-              <a-button type="danger" shape="circle" icon="minus" />
+              <a-button @click="deleteshop(index)" type="danger" shape="circle" icon="minus" />
             </a-form-model-item>
           </a-form-model>
         </div>
@@ -70,9 +73,23 @@
         </div>
       </a-form-model-item>
       <a-form-model-item label="上架时间">
-        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.start_time' size="large" />
+        <a-date-picker
+          v-model="form.start_time"
+          show-time
+          format="YYYY-MM-DD HH:mm:ss"
+          valueFormat="YYYY-MM-DD HH:mm:ss"
+          placeholder="Start"
+          size="large"
+        />
         <span style='margin: 0 10px;'>至</span>
-        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.end_time'  size="large" />
+        <a-date-picker
+          v-model="form.end_time"
+          show-time
+          format="YYYY-MM-DD HH:mm:ss"
+          valueFormat="YYYY-MM-DD HH:mm:ss"
+          placeholder="Start"
+          size="large"
+        />
       </a-form-model-item>
       <a-form-model-item>
         <a-button @click="post">提交</a-button>
@@ -87,10 +104,19 @@
 
 <script>
 import {postData, changeData} from '@/api/goods'
+import {formatTime} from '@/utils/date'
 export default {
   name: 'goodsDetail',
   created(){
-    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form = this.$route.query.data : null
+    if(Object.prototype.hasOwnProperty.call(this.$route.query,'data')){
+      this.form ={
+        ...this.$route.query.data, 
+        status: this.$route.query.data .status == 1 ? true : false
+      }
+    }else{
+      this.form.start_time = formatTime(new Date())
+      this.form.end_time = formatTime(new Date())
+    }
   },
   components:{
     editor: () => import('@/components/editor'),
@@ -112,14 +138,14 @@ export default {
         stock_nums: 0,
         sold: 0,
         type: 2,
-        status: 1,
+        status: true,
         virtual_sales: 0,
         shops: [
           {shop_name: '', shop_addr: '', longitude: '', latitude: '', shop_phone: ''}
         ],
         details: '',
-        start_time: '12:08:23',
-        end_time: '22:33:44',
+        start_time: '2020-12-12 12:08:23',
+        end_time: '2020-12-12 22:33:44',
         imageUrl: []
       },
       headers: {
@@ -143,6 +169,9 @@ export default {
     changeModal(){
       this.visible = !this.visible
     },
+    deleteshop(index){
+      this.form.shops.splice(index,1)
+    },
     setLonaLat(e){
       console.log(this.changeindex,e)
       this.form.shops[this.changeindex] = {
@@ -164,12 +193,12 @@ export default {
     post(){
       setTimeout(() => {
         if(this.$route.query.data){
-          changeData(this.form).then(res => {
+          changeData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
              this.$message.success(res.msg,10)
              this.$router.go(-1)
           })
         }else{
-          postData(this.form).then(res => {
+          postData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
             this.$message.success(res.msg,10)
             this.$router.go(-1)
           })

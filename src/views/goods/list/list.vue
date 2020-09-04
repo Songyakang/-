@@ -1,6 +1,16 @@
 <template>
   <div class="goodsList">
-    <a-form></a-form>
+    <a-form-model style='margin-bottom: 20px;' layout='inline'>
+      <a-form-model-item label="名称">
+        <a-input v-model="title" placeholder="请输入搜索名" />
+      </a-form-model-item>
+      <a-form-model-item>
+        <a-button @click="searchData" type="primary" >搜索</a-button>
+      </a-form-model-item>
+      <a-form-model-item style="float: right;">
+        <a-button @click="go" type="primary" >添加</a-button>
+      </a-form-model-item>
+    </a-form-model>
     <a-table rowKey='id' :columns='columns' :data-source='list'>
       <template slot="photos" slot-scope="text, record">
         <img v-for='(item, index) in record.photos' :key='index' :src='item'>
@@ -30,7 +40,7 @@ export default {
       page: 1,
       size: 10,
       columns: [
-        {title: '姓名', dataIndex: 'title', key: 'title', width: '100px'},
+        {title: '名称', dataIndex: 'title', key: 'title', width: '100px'},
         {title: '图片', dataIndex: 'photos', key: 'photos', scopedSlots: { customRender: 'photos' }},
         {title: '价格', dataIndex: 'money', key: 'money', width: '100px'},
         {title: '划线价', dataIndex: 'line_money', key: 'line_money', width: '100px'},
@@ -38,7 +48,8 @@ export default {
         {title: '虚拟销量', dataIndex: 'virtual_sales', key: 'virtual_sales', width: '100px'},
         {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
       ],
-      list: []
+      list: [],
+      title:''
     }
   },
   methods: {
@@ -67,6 +78,9 @@ export default {
     },
     deleteGood(e){
       console.log(e)
+    },
+    go(){
+      this.$router.push({path: "/goodsEditor"})
     }
   }
 }
