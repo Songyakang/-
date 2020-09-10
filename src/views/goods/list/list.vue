@@ -11,7 +11,7 @@
         <a-button @click="go" type="primary" >添加</a-button>
       </a-form-model-item>
     </a-form-model>
-    <a-table rowKey='id' :columns='columns' :data-source='list'>
+    <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
       <template slot="photos" slot-scope="text, record">
         <img v-for='(item, index) in record.photos' :key='index' :src='item'>
       </template>
@@ -38,7 +38,7 @@ export default {
   data(){
     return {
       page: 1,
-      size: 10,
+      size: 5,
       columns: [
         {title: '名称', dataIndex: 'title', key: 'title', width: '100px'},
         {title: '图片', dataIndex: 'photos', key: 'photos', scopedSlots: { customRender: 'photos' }},
@@ -49,10 +49,19 @@ export default {
         {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
       ],
       list: [],
-      title:''
+      title:'',
+      pagination: {
+        defaultPageSize: 5,
+        hideOnSinglePage: true,
+        total: 0
+      }
     }
   },
   methods: {
+    handleTableChange(a){
+      this.page = a.current
+      this.searchData()
+    },
     searchData(){
       let params = {
         page: this.page,
@@ -64,6 +73,8 @@ export default {
       }
       getData(params).then(res => {
         console.log(res)
+        this.pagination.total = res.count
+        console.log(this.pagination)
         this.list = res.data.map(e => {
           return {
             ...e,
@@ -71,6 +82,9 @@ export default {
             end_time: formatTime(new Date(e.end_time * 1000), 'hh:mm:ss'),
           }
         })
+      }).catch(() => {
+        this.$message.info('查询失败')
+        this.list = []
       })
     },
     editGood(e){

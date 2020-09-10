@@ -46,38 +46,52 @@ Vue.use(VueRouter)
     ]
   },
   {
-    path: '/goodsList',
+    path: '/userList',
     name: '用户管理',
     component: Layout,
     hidden: false,
     children: [
+      {
+        path: '/userList',
+        name: '用户列表',
+        hidden: true,
+        icon: 'customer-service',
+        component: () => import('../views/user/user.vue')
+      }
     ]
   },
   {
-    path: '/goodsList',
+    path: '/subscribeList',
     name: '预约管理',
     component: Layout,
     hidden: false,
     children: [
+      {
+        path: '/subscribeList',
+        name: '预定列表',
+        hidden: true,
+        icon: 'customer-service',
+        component: () => import('../views/subscribe/index/index.vue')
+      }
     ]
   },
   {
-    path: '/goodsList',
+    path: '/distributionlist',
     name: '分销管理',
     component: Layout,
     hidden: false,
     children: [
       {
-        path: '/about',
+        path: '/distributionlist',
         name: '推荐管理',
         icon: 'customer-service',
-        component: () => import('../views/About.vue')
+        component: () => import('../views/distribution/distributionlist/distributionlist.vue')
       },
       {
-        path: '/about',
+        path: '/commissionlist',
         name: '佣金明细',
         icon: 'customer-service',
-        component: () => import('../views/About.vue')
+        component: () => import('../views/distribution/commissionlist/commissionlist.vue')
       }
     ]
   }

@@ -1,8 +1,11 @@
 <template>
-  <div class="tourismList">
+  <div class="subscribeList">
     <a-form-model style='margin-bottom: 20px;' layout='inline'>
-      <a-form-model-item label="名称">
-        <a-input v-model="title" placeholder="请输入搜索名" />
+      <a-form-model-item label="推荐人手机号">
+        <a-input v-model="pid_mobile" placeholder="请输入推荐人手机号" />
+      </a-form-model-item>
+      <a-form-model-item label="手机号">
+        <a-input v-model="mobile" placeholder="请输入用户手机号" />
       </a-form-model-item>
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
@@ -12,8 +15,8 @@
       </a-form-model-item>
     </a-form-model>
     <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
-      <template slot="photos" slot-scope="text, record">
-        <img v-for='(item, index) in record.photos' :key='index' :src='item'>
+      <template slot="profile_picture" slot-scope="text, record">
+        <img :src='record.profile_picture'>
       </template>
       <template slot="edit" slot-scope="text, record">
         <a-tag color="red" @click="deleteGood(record)">删除</a-tag>
@@ -24,10 +27,10 @@
 </template>
 
 <script>
-import {getData} from '@/api/goods'
+import {recommendList} from '@/api/recommend'
 import {formatTime} from '@/utils/date'
 export default {
-  name: 'tourismList',
+  name: 'subscribeList',
   created(){
     this.searchData()
   },
@@ -40,16 +43,17 @@ export default {
       page: 1,
       size: 10,
       columns: [
-        {title: '名称', dataIndex: 'title', key: 'title', width: '100px'},
-        {title: '图片', dataIndex: 'photos', key: 'photos', scopedSlots: { customRender: 'photos' }},
-        {title: '价格', dataIndex: 'money', key: 'money', width: '100px'},
-        {title: '划线价', dataIndex: 'line_money', key: 'line_money', width: '100px'},
-        {title: '库存', dataIndex: 'stock_nums', key: 'stock_nums', width: '100px'},
-        {title: '虚拟销量', dataIndex: 'virtual_sales', key: 'virtual_sales', width: '100px'},
+        {title: '头像', dataIndex: 'profile_picture', key: 'profile_picture', scopedSlots: { customRender: 'profile_picture' }},
+        {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
+        {title: '手机号', dataIndex: 'mobile', key: 'mobile', width: '200px'},
+        {title: '余额', dataIndex: 'balance', key: 'balance', width: '200px'},
+        {title: '推荐人', dataIndex: 'pid_nickname', key: 'pid_nickname'},
+        {title: '推荐人手机号', dataIndex: 'pid_mobile', key: 'pid_mobile', width: '200px'},
         {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
       ],
       list: [],
-      title: '',
+      pid_mobile: '',
+      mobile: '',
       pagination: {
         defaultPageSize: 5,
         hideOnSinglePage: true,
@@ -65,14 +69,16 @@ export default {
     searchData(){
       let params = {
         page: this.page,
-        size: this.size,
-        type: 1
+        size: this.size
       }
-      if(this.title){
-        params.title = this.title
+      if(this.pid_mobile){
+        params.pid_mobile = this.pid_mobile
       }
-      getData(params).then(res => {
-        console.log(res)
+      if(this.mobile){
+        params.mobile = this.mobile
+      }
+      console.log(params)
+      recommendList(params).then(res => {
         this.list = res.data.map(e => {
           return {
             ...e,
@@ -101,8 +107,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 img{
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   margin-right: 2px;
 }
 </style>

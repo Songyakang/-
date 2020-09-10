@@ -13,3 +13,11 @@ export function info() {
     method: 'get'
   })
 }
+
+export function list(params) {
+  return http({
+    url: '/user/wechatUserList',
+    params,
+    method: 'get'
+  })
+}

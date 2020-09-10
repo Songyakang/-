@@ -8,8 +8,8 @@
       </div>
       <a-menu  theme="dark" style='height: calc(100vh - 64px);' mode="inline">
         <template v-for='(item) in routesfmt'>
-          <a-sub-menu v-if='item.children.length > 0' :key="item.name">
-            <div class='menu-item' slot="title">
+          <a-sub-menu v-if='item.children && item.children.length != 0' :key="item.name">
+            <div @click='go(item)' class='menu-item' slot="title">
               <a-icon v-if='item.icon' :type="item.icon" />
               <span v-show='!collapsed'>{{item.name}}</span>
             </div>
