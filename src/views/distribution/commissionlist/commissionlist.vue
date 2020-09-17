@@ -52,7 +52,7 @@ export default {
       list: [],
       mobile: '',
       pagination: {
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         hideOnSinglePage: true,
         total: 0
       }

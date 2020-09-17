@@ -47,7 +47,7 @@ export default {
       pid_mobile: '',
       mobile: '',
       pagination: {
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         hideOnSinglePage: true,
         total: 0
       }

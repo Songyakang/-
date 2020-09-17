@@ -29,13 +29,13 @@
         </div>
       </a-form-model-item>
       <a-form-model-item label="产品价格">
-        <a-input v-model='form.money' class="line" type='number' placeholder="请输入产品价格" />
+        <a-input @keyup='test("money")' v-model='form.money' class="line" type='number' placeholder="请输入产品价格" />
       </a-form-model-item>
       <a-form-model-item label="划线价格">
-        <a-input v-model="form.line_money" class="line" type='number' placeholder="请输入划线价格" />
+        <a-input @keyup='test("line_money")' v-model="form.line_money" class="line" type='number' placeholder="请输入划线价格" />
       </a-form-model-item>
       <a-form-model-item label="库存">
-        <a-input v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
+        <a-input @keyup='test("stock_nums")' v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
       </a-form-model-item>
       <a-form-model-item label="是否销售">
         <a-switch default-checked checked-children="销售" un-checked-children="下架"  v-model='form.status'/>
@@ -189,6 +189,9 @@ export default {
     },
     changetime(e) {
       this.form.end_time = e
+    },
+    test(e){
+      this.form[e] = this.form[e].replace(/^0{1,9}/g, '')
     }
   }
 }
