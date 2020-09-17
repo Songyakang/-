@@ -4,6 +4,9 @@
       <a-form-model-item label="产品标题">
         <a-input v-model="form.title" class="line" placeholder="请输入产品标题" />
       </a-form-model-item>
+      <a-form-model-item label="推广语">
+        <a-input v-model="form.desc" class="line" placeholder="请输入产品标题" />
+      </a-form-model-item>
       <a-form-model-item label="产品图片">
         <a-upload
           name="file"
@@ -73,23 +76,9 @@
         </div>
       </a-form-model-item>
       <a-form-model-item label="上架时间">
-        <a-date-picker
-          v-model="form.start_time"
-          show-time
-          format="YYYY-MM-DD HH:mm:ss"
-          valueFormat="YYYY-MM-DD HH:mm:ss"
-          placeholder="Start"
-          size="large"
-        />
+        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.start_time' size="large" />
         <span style='margin: 0 10px;'>至</span>
-        <a-date-picker
-          v-model="form.end_time"
-          show-time
-          format="YYYY-MM-DD HH:mm:ss"
-          valueFormat="YYYY-MM-DD HH:mm:ss"
-          placeholder="Start"
-          size="large"
-        />
+        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.end_time'  size="large" />
       </a-form-model-item>
       <a-form-model-item>
         <a-button @click="post">提交</a-button>
@@ -109,9 +98,10 @@ export default {
   name: 'goodsDetail',
   created(){
     if(Object.prototype.hasOwnProperty.call(this.$route.query,'data')){
+      let data = JSON.parse(this.$route.query.data)
       this.form ={
-        ...this.$route.query.data, 
-        status: this.$route.query.data .status == 1 ? true : false
+        ...data, 
+        status: data == 1 ? true : false
       }
     }else{
       this.form.start_time = formatTime(new Date())
@@ -133,6 +123,7 @@ export default {
       form: {
         title: '',
         photos: [],
+        desc:"",
         money: 0,
         line_money: 0,
         stock_nums: 0,
@@ -196,11 +187,15 @@ export default {
           changeData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
              this.$message.success(res.msg,10)
              this.$router.go(-1)
+          }).catch(err => {
+            this.$message.error(err.msg,10)
           })
         }else{
           postData({...this.form, status: this.form.status ? 1 : 0}).then(res => {
             this.$message.success(res.msg,10)
             this.$router.go(-1)
+          }).catch(err => {
+            this.$message.error(err.msg,10)
           })
         }
       }, 100)

@@ -16,7 +16,7 @@
         <img v-for='(item, index) in record.photos' :key='index' :src='item'>
       </template>
       <template slot="edit" slot-scope="text, record">
-        <a-tag color="red" @click="deleteGood(record)">删除</a-tag>
+        <!-- <a-tag color="red" @click="deleteGood(record)">删除</a-tag> -->
         <a-tag color="blue" @click="editGood(record)">编辑</a-tag>
       </template>
     </a-table>
@@ -38,7 +38,7 @@ export default {
   data(){
     return {
       page: 1,
-      size: 5,
+      size: 10,
       columns: [
         {title: '名称', dataIndex: 'title', key: 'title', width: '100px'},
         {title: '图片', dataIndex: 'photos', key: 'photos', scopedSlots: { customRender: 'photos' }},
@@ -51,7 +51,7 @@ export default {
       list: [],
       title:'',
       pagination: {
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         hideOnSinglePage: true,
         total: 0
       }
@@ -88,7 +88,7 @@ export default {
       })
     },
     editGood(e){
-      this.$router.push({path: "/goodsEditor", query:{data: e}})
+      this.$router.push({path: "/goodsEditor", query:{data: JSON.stringify(e)}})
     },
     deleteGood(e){
       console.log(e)

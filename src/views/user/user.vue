@@ -10,24 +10,21 @@
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
       </a-form-model-item>
-      <a-form-model-item style="float: right;">
-        <a-button @click="go" type="primary" >添加</a-button>
-      </a-form-model-item>
     </a-form-model>
     <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
       <template slot="profile_picture" slot-scope="text, record">
         <img :src='record.profile_picture'>
       </template>
-      <!-- <template slot="edit" slot-scope="text, record">
-        <a-tag color="red" @click="deleteGood(record)">删除</a-tag>
-        <a-tag color="blue" @click="editGood(record)">编辑</a-tag>
-      </template> -->
+      <template slot="edit" slot-scope="text, record">
+        <a-tag v-if='record.is_admin == 0' color="green" @click="changeadmin(record)">升级管理员</a-tag>
+        <a-tag v-if='record.is_admin == 1' color="red" @click="changeadmin(record)">取消管理员</a-tag>
+      </template>
     </a-table>
   </div>
 </template>
 
 <script>
-import {list} from '@/api/user'
+import {list, updateAdminStatus} from '@/api/user'
 import {formatTime} from '@/utils/date'
 export default {
   name: 'userList',
@@ -46,15 +43,16 @@ export default {
         {title: '头像', dataIndex: 'profile_picture', key: 'profile_picture', width: '100px', scopedSlots: { customRender: 'profile_picture' }},
         {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
         {title: '手机号', dataIndex: 'mobile', key: 'mobile', width: '200px'},
+        {title: '余额', dataIndex: 'balance', key: 'balance', width: '100px'},
         {title: '推荐人', dataIndex: 'pid_nickname', key: 'pid_nickname'},
         {title: '推荐人手机号', dataIndex: 'pid_mobile', key: 'pid_mobile', width: '200px'},
-        //{title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
+        {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
       ],
       list: [],
       nickname: '',
       mobile: '',
       pagination: {
-        defaultPageSize: 5,
+        defaultPageSize: 10,
         hideOnSinglePage: true,
         total: 0
       }
@@ -77,6 +75,7 @@ export default {
         params.mobile = this.mobile
       }
       console.log(params)
+      
       list(params).then(res => {
         console.log(res)
         this.list = res.data.map(e => {
@@ -91,10 +90,17 @@ export default {
         this.list = []
       })
     },
-    editGood(e){
-      this.$router.push({path: "/tourismEditor", query:{data: e}})
+    changeadmin(e){
+      console.log(e)
+      updateAdminStatus({
+        uid: e.uid,
+        is_admin: !e.is_admin ? 1: 0
+      }).then(() => {
+        this.searchData()
+        this.$message.info('操作成功')
+      })
     },
-    deleteGood(e){
+    lowadmin(e){
       console.log(e)
     },
     go(){

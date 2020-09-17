@@ -21,3 +21,12 @@ export function list(params) {
     method: 'get'
   })
 }
+
+
+export function updateAdminStatus(data) {
+  return http({
+    url: '/user/updateAdminStatus',
+    data,
+    method: 'post'
+  })
+}

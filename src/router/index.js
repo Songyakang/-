@@ -15,6 +15,7 @@ Vue.use(VueRouter)
     path: '/tourismManagement',
     name: '产品管理',
     component: Layout,
+    icon: 'flag',
     hidden: false,
     children: [
       {
@@ -49,6 +50,7 @@ Vue.use(VueRouter)
     path: '/userList',
     name: '用户管理',
     component: Layout,
+    icon: 'customer-service',
     hidden: false,
     children: [
       {
@@ -65,6 +67,7 @@ Vue.use(VueRouter)
     name: '预约管理',
     component: Layout,
     hidden: false,
+    icon: 'customer-service',
     children: [
       {
         path: '/subscribeList',
@@ -80,17 +83,18 @@ Vue.use(VueRouter)
     name: '分销管理',
     component: Layout,
     hidden: false,
+    icon: 'team',
     children: [
       {
         path: '/distributionlist',
         name: '推荐管理',
-        icon: 'customer-service',
+        icon: 'team',
         component: () => import('../views/distribution/distributionlist/distributionlist.vue')
       },
       {
         path: '/commissionlist',
         name: '佣金明细',
-        icon: 'customer-service',
+        icon: 'pie-chart',
         component: () => import('../views/distribution/commissionlist/commissionlist.vue')
       }
     ]

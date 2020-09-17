@@ -1,5 +1,14 @@
 <template>
-  <div id="editor">
+  <div style='position: relative;'>
+    <div id="editor"></div>
+    <div style='position: absolute; top: 6px; right: 10px;' @click="visible = true">插入代码</div>
+    <a-modal v-model="visible" :width='"800px"' title="选择地图" ok-text="确认" cancel-text="取消" @ok="posthtml">
+      <a-form-model style='margin-bottom: 20px;'>
+        <a-form-model-item>
+          <a-textarea :auto-size="{ minRows: 4, maxRows: 10 }" v-model="data" placeholder="请输入跟进记录" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
   </div>
 </template>
 
@@ -59,6 +68,7 @@ export default {
     this.editor.customConfig.onblur = (html) => {
       this.$emit('changeData', {data: html})
     }
+    this.initImage()
     //配置菜单
     this.editor.customConfig.menus = this.menus
     this.editor.customConfig.zIndex = 100
@@ -69,10 +79,38 @@ export default {
   },
   data(){
     return {
-      editor: null
+      editor: null,
+      visible: false
     }
   },
   methods: {
+    posthtml(){
+      this.visible = false
+      this.editor.txt.html(this.data)
+      this.$emit('changeData', {data: this.data})
+    },
+    initImage(){
+      this.editor.customConfig.uploadImgServer = 'https://api.muyang.heiym.com/api/admin/common/upload'
+      this.editor.customConfig.uploadFileName = 'file'
+      this.editor.customConfig.uploadImgHeaders = {
+          token: localStorage.token
+      }
+      this.editor.customConfig.uploadImgHooks = {
+        success: function (xhr, editor, result) {
+            // 图片上传并返回结果，图片插入成功之后触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+            console.log('true',xhr, editor, result)
+        },
+        fail: function (xhr, editor, result) {
+            // 图片上传并返回结果，但图片插入错误时触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+            console.log('false',xhr, editor, result)
+        },
+        customInsert: function (insertImg, result) {
+            insertImg(result.data.url)
+        }
+      }
+    }
   }
 }
 </script>

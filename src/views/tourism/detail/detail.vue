@@ -4,6 +4,9 @@
       <a-form-model-item label="产品标题">
         <a-input v-model="form.title" class="line" placeholder="请输入产品标题" />
       </a-form-model-item>
+      <a-form-model-item label="推广语">
+        <a-input v-model="form.desc" class="line" placeholder="请输入产品标题" />
+      </a-form-model-item>
       <a-form-model-item label="产品图片">
         <a-upload
           name="file"
@@ -93,7 +96,7 @@ import {postData, changeData} from '@/api/goods'
 export default {
   name: 'toutismDetail',
   created(){
-    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form ={...this.$route.query.data , status: this.$route.query.data .status == 1 ? true : false} : null
+    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form ={...JSON.parse(this.$route.query.data) , status: JSON.parse(this.$route.query.data) == 1 ? true : false} : null
   },
   components:{
     editor: () => import('@/components/editor'),
@@ -109,6 +112,7 @@ export default {
       wrapperCol: { span: 22 },
       form: {
         title: '',
+        desc: '',
         photos: [],
         money: 0,
         line_money: 0,

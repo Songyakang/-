@@ -7,3 +7,19 @@ export function list(params) {
     method: 'get'
   })
 }
+
+export function addCommission(params) {
+  return http({
+    url: '/book/addCommission',
+    params,
+    method: 'post'
+  })
+}
+
+export function addRemarks(params) {
+  return http({
+    url: '/book/addRemarks',
+    params,
+    method: 'post'
+  })
+}

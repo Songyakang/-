@@ -9,7 +9,7 @@
       <a-menu  theme="dark" style='height: calc(100vh - 64px);' mode="inline">
         <template v-for='(item) in routesfmt'>
           <a-sub-menu v-if='item.children && item.children.length != 0' :key="item.name">
-            <div @click='go(item)' class='menu-item' slot="title">
+            <div class='menu-item' slot="title">
               <a-icon v-if='item.icon' :type="item.icon" />
               <span v-show='!collapsed'>{{item.name}}</span>
             </div>
@@ -76,14 +76,13 @@ export default {
         }
         return data
       }).filter(e => !e.hidden)
-      console.log(route)
       return route
     },
     avatar() {
-      return this.$store.state.user.avatar
+      return require('@/assets/logo.png')
     },
     name() {
-      return this.$store.state.user.name
+      return '沐阳生活-管理后台'
     }
   },
   data () {
@@ -122,6 +121,7 @@ export default {
 .logo > img{
   width: 40px;
   border-radius: 50%;
+  background: #fff;
 }
 .logo > div{
   margin-left: 10px;

@@ -10,17 +10,10 @@
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
       </a-form-model-item>
-      <a-form-model-item style="float: right;">
-        <a-button @click="go" type="primary" >添加</a-button>
-      </a-form-model-item>
     </a-form-model>
     <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
       <template slot="profile_picture" slot-scope="text, record">
         <img :src='record.profile_picture'>
-      </template>
-      <template slot="edit" slot-scope="text, record">
-        <a-tag color="red" @click="deleteGood(record)">删除</a-tag>
-        <a-tag color="blue" @click="editGood(record)">编辑</a-tag>
       </template>
     </a-table>
   </div>
@@ -49,7 +42,6 @@ export default {
         {title: '余额', dataIndex: 'balance', key: 'balance', width: '200px'},
         {title: '推荐人', dataIndex: 'pid_nickname', key: 'pid_nickname'},
         {title: '推荐人手机号', dataIndex: 'pid_mobile', key: 'pid_mobile', width: '200px'},
-        {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
       ],
       list: [],
       pid_mobile: '',

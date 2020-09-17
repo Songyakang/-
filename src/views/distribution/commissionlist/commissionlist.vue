@@ -7,9 +7,6 @@
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
       </a-form-model-item>
-      <a-form-model-item style="float: right;">
-        <a-button @click="go" type="primary" >添加</a-button>
-      </a-form-model-item>
     </a-form-model>
     <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
       <template slot="profile_picture" slot-scope="text, record">
@@ -47,9 +44,10 @@ export default {
         {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
         {title: '手机号', dataIndex: 'mobile', key: 'mobile', width: '200px'},
         {title: '类型', dataIndex: 'remarks', key: 'remarks'},
+        {title: '金额', dataIndex: 'money', key: 'money'},
         {title: '获得方式', dataIndex: 'title', key: 'title'},
-        {title: '是否发放', dataIndex: 'is_send', key: 'is_send', scopedSlots: { customRender: 'is_send' }},
-        {title: '编辑', dataIndex: 'edit', key: 'edit', scopedSlots: { customRender: 'edit' }},
+        {title: '时间', dataIndex: 'created_at', key: 'created_at'},
+        {title: '是否发放', dataIndex: 'is_send', key: 'is_send', scopedSlots: { customRender: 'is_send' }}
       ],
       list: [],
       mobile: '',
