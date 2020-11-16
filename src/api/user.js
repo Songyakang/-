@@ -22,7 +22,13 @@ export function list(params) {
   })
 }
 
-
+export function editWechatUser(data) {
+  return http({
+    url: '/user/editWechatUser',
+    data,
+    method: 'post'
+  })
+}
 export function updateAdminStatus(data) {
   return http({
     url: '/user/updateAdminStatus',

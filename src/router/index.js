@@ -50,14 +50,14 @@ Vue.use(VueRouter)
     path: '/userList',
     name: '用户管理',
     component: Layout,
-    icon: 'customer-service',
+    icon: 'usergroup-add',
     hidden: false,
     children: [
       {
         path: '/userList',
         name: '用户列表',
         hidden: true,
-        icon: 'customer-service',
+        icon: 'usergroup-add',
         component: () => import('../views/user/user.vue')
       }
     ]
@@ -67,13 +67,13 @@ Vue.use(VueRouter)
     name: '预约管理',
     component: Layout,
     hidden: false,
-    icon: 'customer-service',
+    icon: 'api',
     children: [
       {
         path: '/subscribeList',
         name: '预定列表',
         hidden: true,
-        icon: 'customer-service',
+        icon: 'api',
         component: () => import('../views/subscribe/index/index.vue')
       }
     ]

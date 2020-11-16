@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 const http = axios.create({
-  baseURL: 'https://api.muyang.heiym.com/api/admin/',
+  baseURL: 'https://api.muyanglive.com/api/admin/',
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
   },

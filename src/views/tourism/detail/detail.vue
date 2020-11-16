@@ -13,20 +13,33 @@
           list-type="picture-card"
           class="avatar-uploader"
           :show-upload-list="false"
-          action="https://api.muyang.heiym.com/api/admin/common/upload"
+          action="https://api.muyanglive.com/api/admin/common/upload"
           :headers='headers'
           @change="handleChange"
         >
-          <div v-if='form.photos.length < 10'>
+          <div style="height: 100%; width: 100%; display: flex; justify-content: center; align-items: center; flex-flow: column nowrap;" v-if='form.photos.length < 10'>
             <a-icon :type="loading ? 'loading' : 'plus'" />
             <div class="ant-upload-text">
               Upload
             </div>
           </div>
         </a-upload>
-        <div class="img-list" v-for='(item, index) in form.photos' :key='index'>
-          <img :src='item'>
-        </div>
+        <a-upload
+          name="file"
+          list-type="picture-card"
+          class="avatar-uploader"
+          :show-upload-list="false"
+          action="https://api.muyanglive.com/api/admin/common/upload"
+          :headers='headers'
+          @change="(e) => replaceImage(index, e)"
+          v-for='(item, index) in form.photos' :key='index'
+        >
+          <div class="img-list" >
+            <img :src='item'>
+            <a-icon @click.stop="form.photos.splice(index,1)" style='cursor: pointer; position: absolute; font-size: 20px; right: -20px; top: -20px; width: 20px; height: 0px;' type="close-circle" />
+            <a-icon style='cursor: pointer; position: absolute; width: 20px; height: 20rpx;' type="reload" />
+          </div>
+        </a-upload>
       </a-form-model-item>
       <a-form-model-item label="产品价格">
         <a-input @keyup='test("money")' v-model='form.money' class="line" type='number' placeholder="请输入产品价格" />
@@ -38,10 +51,16 @@
         <a-input @keyup='test("stock_nums")' v-model='form.stock_nums' class="line" type='number' placeholder="请输入商品库存" />
       </a-form-model-item>
       <a-form-model-item label="是否销售">
-        <a-switch default-checked checked-children="销售" un-checked-children="下架"  v-model='form.status'/>
+        <a-switch  default-checked checked-children="销售" un-checked-children="下架"  v-model='form.status'/>
+      </a-form-model-item>
+      <a-form-model-item label="是否显示">
+        <a-radio-group v-model="form.is_show">
+          <a-radio :value="1">显示</a-radio>
+          <a-radio :value="0">隐藏</a-radio>
+        </a-radio-group>
       </a-form-model-item>
       <a-form-model-item label="虚拟销量">
-        <a-input v-model="form.virtual_sales" class="line" type='number' placeholder="请输入虚拟销量" />
+        <a-input @keyup="test('virtual_sales')" v-model="form.virtual_sales" class="line" type='number' placeholder="请输入虚拟销量" />
       </a-form-model-item>
       <a-form-model-item label="商家信息">
         <div v-for='(item, index) in form.shops' :key='index'>
@@ -76,9 +95,9 @@
         </div>
       </a-form-model-item>
       <a-form-model-item label="上架时间">
-        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.start_time' size="large" />
+        <a-date-picker format='YYYY-MM-DD HH:mm:ss' valueFormat='YYYY-MM-DD HH:mm:ss' v-model='form.start_time' size="large" />
         <span style='margin: 0 10px;'>至</span>
-        <a-time-picker format='HH:mm:ss' valueFormat='HH:mm:ss' v-model='form.end_time'  size="large" />
+        <a-date-picker format='YYYY-MM-DD HH:mm:ss' valueFormat='YYYY-MM-DD HH:mm:ss' v-model='form.end_time'  size="large" />
       </a-form-model-item>
       <a-form-model-item>
         <a-button @click="post">提交</a-button>
@@ -96,7 +115,8 @@ import {postData, changeData} from '@/api/goods'
 export default {
   name: 'toutismDetail',
   created(){
-    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form ={...JSON.parse(this.$route.query.data) , status: JSON.parse(this.$route.query.data) == 1 ? true : false} : null
+    console.log(JSON.parse(this.$route.query.data))
+    Object.prototype.hasOwnProperty.call(this.$route.query,'data') ? this.form ={...JSON.parse(this.$route.query.data) , status: JSON.parse(this.$route.query.data).status == 1 ? true : false} : null
   },
   components:{
     editor: () => import('@/components/editor'),
@@ -112,7 +132,7 @@ export default {
       wrapperCol: { span: 22 },
       form: {
         title: '',
-        desc: '',
+        desc: '沐阳生活，吃喝玩乐全都有',
         photos: [],
         money: 0,
         line_money: 0,
@@ -127,7 +147,8 @@ export default {
         details: '',
         start_time: '12:08:23',
         end_time: '22:33:44',
-        imageUrl: []
+        imageUrl: [],
+        is_show: 1
       },
       headers: {
         token: localStorage.token
@@ -192,6 +213,16 @@ export default {
     },
     test(e){
       this.form[e] = this.form[e].replace(/^0{1,9}/g, '')
+    },
+    replaceImage(index, e){
+      console.log(index, e)
+      if(e.file.response){
+        if(e.file.response.code == 200){
+          this.$set(this.form.photos, index, e.file.response.data.url)
+        }else{
+          this.$message.error(e.file.response.msg)
+        }
+      }
     }
   }
 }
@@ -216,17 +247,11 @@ export default {
   cursor: pointer;
 }
 .img-list{
-  display: table;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   float: left;
-  width: 104px;
-  height: 104px;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  text-align: center;
-  vertical-align: top;
-  background-color: #fafafa;
-  border: 1px dashed #d9d9d9;
-  border-radius: 4px;
+  position: relative;
   cursor: pointer;
   transition: border-color 0.3s ease;
   img{

@@ -4,8 +4,27 @@
       <a-form-model-item label="手机号">
         <a-input v-model="mobile" placeholder="请输入用户手机号" />
       </a-form-model-item>
+      <a-form-model-item label="管理员">
+        <a-select v-model="status" style="width: 120px">
+          <a-select-option value="">
+             全部
+          </a-select-option>
+          <a-select-option v-for='item in adminList' :key='item.uid'  :value="item.uid">
+             {{item.nickname}}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="时间">
+        <a-range-picker :locale='locale' @change="onChange" />
+      </a-form-model-item>
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
+      </a-form-model-item>
+      <a-form-model-item label='总加款' style='float: right;'>
+        {{total_add_money}}
+      </a-form-model-item>
+      <a-form-model-item label='总减款' style='float: right;'>
+        {{total_subtract_money}}
       </a-form-model-item>
     </a-form-model>
     <a-table :pagination='pagination' @change="handleTableChange" rowKey='id' :columns='columns' :data-source='list'>
@@ -27,10 +46,16 @@
 <script>
 import {transactionDetails} from '@/api/recommend'
 import {formatTime} from '@/utils/date'
+import {list} from '@/api/user'
+import 'moment/locale/zh-cn'
+import locale from 'ant-design-vue/es/date-picker/locale/zh_CN'
 export default {
   name: 'subscribeList',
   created(){
     this.searchData()
+    list({page: 1, size: 100, is_admin: 1}).then(res => {
+      this.adminList = res.data
+    })
   },
   components:{
   },
@@ -38,9 +63,13 @@ export default {
   },
   data(){
     return {
+      total_add_money: 0,
+      total_subtract_money: 0,
+      locale,
       page: 1,
       size: 10,
       columns: [
+        {title: 'ID', dataIndex: 'id', key: 'id'},
         {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
         {title: '手机号', dataIndex: 'mobile', key: 'mobile', width: '200px'},
         {title: '类型', dataIndex: 'remarks', key: 'remarks'},
@@ -55,7 +84,10 @@ export default {
         defaultPageSize: 10,
         hideOnSinglePage: true,
         total: 0
-      }
+      },
+      status: '',
+      book_date: '',
+      adminList: []
     }
   },
   methods: {
@@ -71,9 +103,18 @@ export default {
       if(this.mobile){
         params.mobile = this.mobile
       }
+      if(this.status){
+        params.wechat_admin_uid = this.status
+      }
+      if(this.book_date){
+        params.transaction_date = this.book_date
+      }
       transactionDetails(params).then(res => {
         console.log(res)
-        this.list = res.data.map(e => {
+        this.total_subtract_money = res.data.total_subtract_money
+        this.total_add_money = res.data.total_add_money
+        this.pagination.total = res.count
+        this.list = res.data.list.map(e => {
           return {
             ...e,
             start_time: formatTime(new Date(e.start_time * 1000), 'hh:mm:ss'),
@@ -93,6 +134,10 @@ export default {
     },
     go(){
       this.$router.push({path: "/goodsEditor"})
+    },
+    onChange(e, dateString){
+      console.log(e, dateString)
+      this.book_date = dateString
     }
   }
 }

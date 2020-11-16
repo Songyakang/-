@@ -1,6 +1,25 @@
 <template>
   <div class="subscribeList">
     <a-form-model style='margin-bottom: 20px;' layout='inline'>
+      <a-form-model-item label="状态">
+        <a-select v-model="status" style="width: 120px" loading>
+          <a-select-option value="">
+             全部
+          </a-select-option>
+          <a-select-option value="1">
+              预约成功
+          </a-select-option>
+          <a-select-option value="2">
+             预约失败
+          </a-select-option>
+          <a-select-option value="3">
+             已完成
+          </a-select-option>
+          <a-select-option value="0">
+             未跟进
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
       <a-form-model-item label="推荐人手机号">
         <a-input v-model="pid_mobile" placeholder="请输入推荐人手机号" />
       </a-form-model-item>
@@ -8,7 +27,7 @@
         <a-input v-model="mobile" placeholder="请输入用户手机号" />
       </a-form-model-item>
       <a-form-model-item label="时间">
-        <a-range-picker @change="onChange" />
+        <a-range-picker :locale='locale' @change="onChange" />
       </a-form-model-item>
       <a-form-model-item>
         <a-button @click="searchData" type="primary" >搜索</a-button>
@@ -32,6 +51,7 @@
         <a-tag color="blue" v-if='record.status == 0' @click="detail = {...record}; remarksModal = true;">未跟进</a-tag>
         <a-tag color="green" v-if='record.status == 1' @click="detail = {...record}; remarksModal = true;">预约成功</a-tag>
         <a-tag color="red" v-if='record.status == 2' @click="detail = {...record}; remarksModal = true;">预约失败</a-tag>
+        <a-tag color="green" v-if='record.status == 3' @click="detail = {...record}; remarksModal = true;">已完成</a-tag>
         <a-tag color="green" v-if='record.pid != 0 && record.is_send == 0' @click="detail = {...record, price: 1}; priceModal = true;">发放佣金</a-tag>
       </template>
     </a-table>
@@ -55,6 +75,19 @@
         <a-form-model-item label="跟进记录">
           <a-textarea :auto-size="{ minRows: 4, maxRows: 10 }" v-model="detail.remarks" placeholder="请输入跟进记录" />
         </a-form-model-item>
+        <a-form-model-item label="跟进状态">
+          <a-radio-group v-model="detail.status" @change="onChange">
+            <a-radio :value="1">
+              跟进成功
+            </a-radio>
+            <a-radio :value="2">
+              跟进失败
+            </a-radio>
+            <a-radio :value="3">
+              已完成
+            </a-radio>
+          </a-radio-group>
+        </a-form-model-item>
       </a-form-model>
     </a-modal>
   </div>
@@ -62,7 +95,9 @@
 
 <script>
 import {list, addCommission, addRemarks} from '@/api/subscribe'
+import locale from 'ant-design-vue/es/date-picker/locale/zh_CN'
 import {formatTime} from '@/utils/date'
+import 'moment/locale/zh-cn'
 export default {
   name: 'subscribeList',
   created(){
@@ -74,9 +109,11 @@ export default {
   },
   data(){
     return {
+      locale,
       page: 1,
       size: 10,
       columns: [
+        {title: 'ID', dataIndex: 'id', key: 'id'},
         {title: '昵称', dataIndex: 'nickname', key: 'nickname'},
         {title: '手机号', dataIndex: 'mobile', key: 'mobile', width: '200px'},
         {title: '商品', dataIndex: 'item_title', key: 'item_title'},
@@ -99,7 +136,8 @@ export default {
       priceModal: false,
       remarksModal: false,
       book_date: '',
-      detail:{}
+      detail:{},
+      status: ''
     }
   },
   methods: {
@@ -125,9 +163,13 @@ export default {
       if(this.book_date){
         params.book_date = this.book_date
       }
+      if(this.status){
+        params.status = this.status
+      }
       console.log(params)
       list(params).then(res => {
         console.log(res)
+        this.pagination.total = res.count
         this.list = res.data.map(e => {
           return {
             ...e,
@@ -163,7 +205,8 @@ export default {
     postRemarks(){
       addRemarks({
         id: this.detail.id,
-        remarks: this.detail.remarks
+        remarks: this.detail.remarks,
+        status: this.detail.status
       }).then(() => {
         this.$message.info('操作成功')
         this.searchData()

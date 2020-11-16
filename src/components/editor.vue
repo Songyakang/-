@@ -90,7 +90,7 @@ export default {
       this.$emit('changeData', {data: this.data})
     },
     initImage(){
-      this.editor.customConfig.uploadImgServer = 'https://api.muyang.heiym.com/api/admin/common/upload'
+      this.editor.customConfig.uploadImgServer = 'https://api.muyanglive.com/api/admin/common/upload'
       this.editor.customConfig.uploadFileName = 'file'
       this.editor.customConfig.uploadImgHeaders = {
           token: localStorage.token

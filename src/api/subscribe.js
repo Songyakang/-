@@ -16,10 +16,10 @@ export function addCommission(params) {
   })
 }
 
-export function addRemarks(params) {
+export function addRemarks(data) {
   return http({
     url: '/book/addRemarks',
-    params,
+    data,
     method: 'post'
   })
 }

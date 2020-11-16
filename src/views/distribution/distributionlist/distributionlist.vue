@@ -71,6 +71,7 @@ export default {
       }
       console.log(params)
       recommendList(params).then(res => {
+        this.pagination.total = res.count
         this.list = res.data.map(e => {
           return {
             ...e,
